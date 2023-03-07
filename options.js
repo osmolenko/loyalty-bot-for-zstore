@@ -1,17 +1,19 @@
+const { buttons, sharePhone } = require("./i18n")
+
 module.exports = {
   startOptions: {
     reply_markup: JSON.stringify({
-      keyboard: [[{ text: "Поділитись номером", request_contact: true }]],
+      keyboard: [[{ text: sharePhone, request_contact: true }]],
     }),
   },
 
   menuOptions: {
     reply_markup: JSON.stringify({
       keyboard: [
-        [{ text: "Моя картка лояльності" }],
-        [{ text: "Моя знижка" }, { text: "Умови" }],
-        [{ text: "Контакти" }, { text: "Як пройти?" }]
+        [{ text: buttons.loyaltyCard.text }],
+        [{ text: buttons.discount.text }, { text: buttons.conditions.text }],
+        [{ text: buttons.contacts.text }, { text: buttons.directions.text }],
       ],
     }),
   },
-};
+}
