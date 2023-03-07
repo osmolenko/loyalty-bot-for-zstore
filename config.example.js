@@ -1,7 +1,8 @@
 module.exports = {
-    telegramBotToken: 'TOKEN',
-    mysqlHost: 'HOST',
-    mysqlUsername: 'USERNAME',
-    mysqlPassword: 'PASSWORD',
-    mysqlDatabase: 'DB',
-}
+  telegramBotToken: "TOKEN",
+  viberBotToken: "TOKEN",
+  mysqlHost: "HOST",
+  mysqlUsername: "USERNAME",
+  mysqlPassword: "PASSWORD",
+  mysqlDatabase: "DB",
+};
