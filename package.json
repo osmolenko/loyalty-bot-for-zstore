@@ -8,14 +8,18 @@
   "private": false,
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "bwip-js": "^3.3.0",
+    "express": "^4.18.2",
     "mysql": "^2.18.1",
-    "node-telegram-bot-api": "^0.61.0"
+    "node-telegram-bot-api": "^0.61.0",
+    "viber-bot": "^1.0.18"
   },
   "devDependencies": {
+    "ngrok": "^4.3.3",
     "nodemon": "^2.0.20"
   }
 }
