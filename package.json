@@ -1,6 +1,6 @@
 {
-  "name": "loyalty_card_telegram_zstore",
-  "version": "0.1.0",
+  "name": "loyalty_card_bot_zstore",
+  "version": "0.3.0",
   "description": "Customer loyalty card telegram bot for zstore",
   "main": "index.js",
   "author": "osmolenko",
