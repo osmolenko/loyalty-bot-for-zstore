@@ -1,38 +1,51 @@
 const TelegramApi = require("node-telegram-bot-api")
-const { telegramBotToken, viberBotToken } = require("./config")
+const { baseUrl, telegramBotToken, viberBotToken } = require("./config")
 const { startTelegramBot } = require("./telegram")
 const { startViberBot } = require("./viber")
 const ViberBot = require("viber-bot").Bot
 const express = require("express")
+const path = require("path")
 
-const telegramBot = new TelegramApi(telegramBotToken, {
-  polling: {
-    params: {
-      limit: 2,
+if (telegramBotToken.length > 0) {
+  const telegramBot = new TelegramApi(telegramBotToken, {
+    polling: {
+      params: {
+        limit: 2,
+      },
     },
-  },
-})
+  })
 
-// const viberBot = new ViberBot({
-//   authToken: viberBotToken,
-//   name: "VivaSport - спортивні товари",
-//   avatar: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Katze_weiss.png",
-// })
+  startTelegramBot(telegramBot)
+}
 
-// const app = express()
-// const port = process.env.PORT || 3000
-// app.use("/viber/webhook", viberBot.middleware())
+if (viberBotToken.length > 0) {
+  console.log(`${baseUrl}/images/favicon.jpg`)
 
-// app.listen(port, () => {
-//   console.log(`Application running on port: ${port}`)
-//   viberBot
-//     .setWebhook(`https://2ffa-89-209-93-4.ngrok.io/viber/webhook`)
-//     .catch((error) => {
-//       console.log("Can not set webhook on following server. Is it running?")
-//       console.error(error)
-//       process.exit(1)
-//     })
-// })
+  const viberBot = new ViberBot({
+    authToken: viberBotToken,
+    name: "VivaSport - спортивні товари",
+    avatar: `${baseUrl}/images/favicon.jpg`,
+  })
 
-startTelegramBot(telegramBot)
-// startViberBot(viberBot)
+  const app = express()
+  const port = process.env.PORT || 3000
+  app.use("/viber/webhook", viberBot.middleware())
+  app.use("/barcodes", express.static(path.join(__dirname, "barcodes")))
+  app.use("/images", express.static(path.join(__dirname, "images")))
+
+  app.listen(port, () => {
+    console.log(`Application running on port: ${port}`)
+    viberBot.setWebhook(`${baseUrl}/viber/webhook`).catch((error) => {
+      console.log("Can not set webhook on following server. Is it running?")
+      console.error(error)
+      process.exit(1)
+    })
+  })
+
+  startViberBot(viberBot)
+}
+
+if (telegramBotToken.length <= 0 && viberBotToken.length <= 0) {
+  console.error("Не задано токени ботів")
+  process.exit(1)
+}

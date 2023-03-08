@@ -24,9 +24,15 @@ module.exports = {
       {
         "Columns": 6,
         "Rows": 2,
-        "Text": sharePhone,
+        "Text": `<font size="24" color="#0047AB"><b>${sharePhone}</b></font>`,
         "ActionType": "share-phone",
-        "ActionBody": "Yes"
+        "ActionBody": "Yes",
+        "TextSize": "large",
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       }
       
     ]
@@ -34,41 +40,72 @@ module.exports = {
   menuViberKeyboard: {
     "Type": "keyboard",
     "Revision": 1,
+    "BgColor": "#B5B8B1",
     "Buttons": [
       {
         "Columns": 6,
         "Rows": 1,
-        "Text": buttons.loyaltyCard.text,
+        "Text": `<font size="20" color="#0047AB"><b>${buttons.loyaltyCard.text}</b></font>`,
+        "BgColor": "#FFFFFF",
         "ActionType": "reply",
-        "ActionBody": buttons.loyaltyCard.text
+        "ActionBody": buttons.loyaltyCard.text,
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       },
       {
         "Columns": 3,
         "Rows": 1,
-        "Text": buttons.discount.text,
+        "Text": `<font size="20" color="#0047AB"><b>${buttons.discount.text}</b></font>`,
+        "BgColor": "#FFFFFF",
         "ActionType": "reply",
-        "ActionBody": buttons.discount.text
+        "ActionBody": buttons.discount.text,
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       },
       {
         "Columns": 3,
         "Rows": 1,
-        "Text": buttons.conditions.text,
+        "Text": `<font size="20" color="#0047AB"><b>${buttons.conditions.text}</b></font>`,
+        "BgColor": "#FFFFFF",
         "ActionType": "reply",
-        "ActionBody": buttons.conditions.text
+        "ActionBody": buttons.conditions.text,
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       },
       {
         "Columns": 3,
         "Rows": 1,
-        "Text": buttons.contacts.text,
+        "Text": `<font size="20" color="#0047AB"><b>${buttons.contacts.text}</b></font>`,
+        "BgColor": "#FFFFFF",
         "ActionType": "reply",
-        "ActionBody": buttons.contacts.text
+        "ActionBody": buttons.contacts.text,
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       },
       {
         "Columns": 3,
         "Rows": 1,
-        "Text": buttons.directions.text,
+        "Text": `<font size="20" color="#0047AB"><b>${buttons.directions.text}</b></font>`,
+        "BgColor": "#FFFFFF",
         "ActionType": "reply",
-        "ActionBody": buttons.directions.text
+        "ActionBody": buttons.directions.text,
+        "Frame": {
+          "BorderWidth": "05",
+          "BorderColor": "#0047AB",
+          "CornerRadius": "10"
+          },
       },
       
     ]
