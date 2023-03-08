@@ -25,14 +25,31 @@ function checkIfTelegramUserExists(chatId) {
         return query
 }
 
-function getUserByPhone(msg) {
+function checkIfViberUserExists(chatId) {
+    const query = 
+    `SELECT
+        customer_id,
+        customer_name,
+        phone,
+        ExtractValue ( detail, '/detail/discount') as discount,
+        ExtractValue ( detail, '/detail/chat_id' ) as telegram_chat_id,
+        ExtractValue ( detail, '/detail/viber' ) as viber
+    FROM
+        customers 
+    WHERE
+        ExtractValue ( detail, '/detail/viber' ) = "${chatId}"`
+        return query
+}
+
+
+function getUserByPhone(phone) {
     const query = 
     `SELECT
         customers.customer_id
     FROM
         customers
     WHERE
-        customers.phone = '${msg.contact.phone_number.replace("+", "")}'`
+        customers.phone = '${phone.replace("+", "")}'`
     return query
 }
 
@@ -46,12 +63,22 @@ function addTelegramBotToken(msg) {
     return query
 }
 
-function addNewUserFromTelegram(msg) {
+function addViberBotToken(msg, res) {
+    const query = `UPDATE customers 
+    SET detail = (
+        SELECT
+        UpdateXML ( detail, '/detail/viber', '<viber>${res.userProfile.id}</viber>' )) 
+    WHERE
+        customers.phone = '${msg.contactPhoneNumber.replace("+", "")}'`
+    return query
+}
+
+function addNewUserFromTelegram(msg, res) {
     const query = 
         `INSERT INTO customers ( customer_name, phone, detail )
         VALUES (
                 '${msg.contact.first_name}',
-                '${msg.contact.phone_number.replace("+", "")}',
+                '${msg.contactPhoneNumber.replace("+", "")}',
                 '<detail>
                     <code></code>
                     <type>1</type>
@@ -76,12 +103,12 @@ function addNewUserFromTelegram(msg) {
     return query
 }
 
-function addNewUserFromViber(msg) {
+function addNewUserFromViber(msg, res) {
     const query = 
     `INSERT INTO customers ( customer_name, phone, detail )
     VALUES (
-            '${msg.contact.first_name}',
-            '${msg.contact.phone_number.replace("+", "")}',
+            '${res.userProfile.name}',
+            '${msg.contactPhoneNumber.replace("+", "")}',
             '<detail>
                 <code></code>
                 <type>1</type>
@@ -90,7 +117,7 @@ function addNewUserFromViber(msg) {
                 <shopcust_id></shopcust_id>
                 <isholding>0</isholding>
                 <holding>0</holding>
-                <viber>${msg.chat.id}</viber>
+                <viber>${res.userProfile.id}</viber>
                 <nosubs>0</nosubs>
                 <allowedshop>0</allowedshop>
                 <edrpou></edrpou>
@@ -110,8 +137,10 @@ function addNewUserFromViber(msg) {
 module.exports = {
     connection,
     checkIfTelegramUserExists,
+    checkIfViberUserExists,
     getUserByPhone,
+    addTelegramBotToken,
+    addViberBotToken,
     addNewUserFromTelegram,
     addNewUserFromViber,
-    addTelegramBotToken
 }

@@ -31,54 +31,57 @@ async function start(bot) {
         // Перевіряємо чи є повідомлення контактом і чи відправленний контакт === контакт що звернувся
         if (msg.contact && msg.contact.user_id === chatId) {
           // Забираємо з БД юзера по наданому номеру телефону
-          connection.query(getUserByPhone(msg), async function (error, result) {
-            const userByPhone = result[0]
+          connection.query(
+            getUserByPhone(msg.contact.phone_number),
+            async function (error, result) {
+              const userByPhone = result[0]
 
-            // Якщо дані про юзера є в БД по номеру або чат-айді
-            if (user || userByPhone) {
-              await bot.sendMessage(
-                chatId,
-                exist.telegram.replace("{{phone}}", msg.contact.phone_number),
-                menuTelegramKeyboard
-              )
-              // Оновлюємо чат-айди юзера
-              connection.query(
-                addTelegramBotToken(msg),
-                async function (error, result) {
-                  if (result) {
-                    await bot.sendMessage(
-                      chatId,
-                      cardCreated,
-                      menuTelegramKeyboard
-                    )
+              // Якщо дані про юзера є в БД по номеру або чат-айді
+              if (user || userByPhone) {
+                await bot.sendMessage(
+                  chatId,
+                  exist.telegram.replace("{{phone}}", msg.contact.phone_number),
+                  menuTelegramKeyboard
+                )
+                // Оновлюємо чат-айди юзера
+                connection.query(
+                  addTelegramBotToken(msg),
+                  async function (error, result) {
+                    if (result) {
+                      await bot.sendMessage(
+                        chatId,
+                        cardCreated,
+                        menuTelegramKeyboard
+                      )
+                    }
                   }
-                }
-              )
-              // Якщо юзера немає у БД
-            } else {
-              await bot.sendMessage(
-                chatId,
-                nonexist.telegram.replace(
-                  "{{phone}}",
-                  msg.contact.phone_number
-                ),
-                menuTelegramKeyboard
-              )
-              // Створюємо юзера і записуємо чат-айді
-              connection.query(
-                addNewUserFromTelegram(msg),
-                async function (error, result) {
-                  if (result) {
-                    await bot.sendMessage(
-                      chatId,
-                      cardCreated,
-                      menuTelegramKeyboard
-                    )
+                )
+                // Якщо юзера немає у БД
+              } else {
+                await bot.sendMessage(
+                  chatId,
+                  nonexist.telegram.replace(
+                    "{{phone}}",
+                    msg.contact.phone_number
+                  ),
+                  menuTelegramKeyboard
+                )
+                // Створюємо юзера і записуємо чат-айді
+                connection.query(
+                  addNewUserFromTelegram(msg),
+                  async function (error, result) {
+                    if (result) {
+                      await bot.sendMessage(
+                        chatId,
+                        cardCreated,
+                        menuTelegramKeyboard
+                      )
+                    }
                   }
-                }
-              )
+                )
+              }
             }
-          })
+          )
         }
 
         try {
