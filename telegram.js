@@ -125,8 +125,7 @@ async function start(bot) {
                     .sendPhoto(chatId, png, {
                       caption: buttons.loyaltyCard.response,
                     })
-                    .then((error) => {
-                      if (error) winstonLogger.error(error)
+                    .then((e) => {
                       bot.unpinAllChatMessages(chatId)
                       bot.pinChatMessage(chatId, e.message_id)
                     })
