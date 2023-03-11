@@ -15,7 +15,9 @@ const {
   buttons,
   authorized,
 } = require("./i18n")
-const { getBarcode } = require("./helper")
+const { getBarcode, createLogger } = require("./helper")
+
+const winstonLogger = createLogger()
 
 async function start(bot) {
   bot.on("message", async (msg) => {
@@ -26,6 +28,8 @@ async function start(bot) {
       // Перевіряємо чи є в БД юзер з чат-айді який звернувся
       checkIfTelegramUserExists(chatId),
       async function (error, result) {
+        if (error) winstonLogger.error(error)
+
         const user = result[0]
 
         // Перевіряємо чи є повідомлення контактом і чи відправленний контакт === контакт що звернувся
@@ -34,6 +38,8 @@ async function start(bot) {
           connection.query(
             getUserByPhone(msg.contact.phone_number),
             async function (error, result) {
+              if (error) winstonLogger.error(error)
+
               const userByPhone = result[0]
 
               // Якщо дані про юзера є в БД по номеру або чат-айді
@@ -47,6 +53,8 @@ async function start(bot) {
                 connection.query(
                   addTelegramBotToken(msg),
                   async function (error, result) {
+                    if (error) winstonLogger.error(error)
+
                     if (result) {
                       await bot.sendMessage(
                         chatId,
@@ -70,6 +78,8 @@ async function start(bot) {
                 connection.query(
                   addNewUserFromTelegram(msg),
                   async function (error, result) {
+                    if (error) winstonLogger.error(error)
+
                     if (result) {
                       await bot.sendMessage(
                         chatId,
@@ -107,15 +117,16 @@ async function start(bot) {
               break
 
             case buttons.loyaltyCard.text:
-              getBarcode(user.phone, async function (err, png) {
-                if (err) {
-                  console.log(error)
+              getBarcode(user.phone, async function (error, png) {
+                if (error) {
+                  winstonLogger.error(error)
                 } else {
                   bot
                     .sendPhoto(chatId, png, {
                       caption: buttons.loyaltyCard.response,
                     })
-                    .then((e) => {
+                    .then((error) => {
+                      if (error) winstonLogger.error(error)
                       bot.unpinAllChatMessages(chatId)
                       bot.pinChatMessage(chatId, e.message_id)
                     })
@@ -160,7 +171,7 @@ async function start(bot) {
               break
           }
         } catch (error) {
-          console.log(error)
+          winstonLogger.error(error)
           return bot.sendMessage(chatId, "Виникла помилка")
         }
       }
