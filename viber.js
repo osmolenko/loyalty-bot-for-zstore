@@ -7,6 +7,7 @@ const {
   checkIfViberUserExists,
   getUserByPhone,
   addViberBotToken,
+  addNewUserFromViber,
 } = require("./db")
 const { helloText, cardCreated, buttons, exist, nonexist } = require("./i18n")
 const { getBarcodeUrl, createLogger } = require("./helper")
@@ -15,6 +16,16 @@ const winstonLogger = createLogger()
 
 function start(viberBot) {
   viberBot.on(BotEvents.CONVERSATION_STARTED, (response) => {
+    helloText.map((message) => {
+      response
+        .send(new TextMessage(message, startViberKeyboard, null, null, null, 6))
+        .catch((error) => {
+          winstonLogger.error(error)
+        })
+    })
+  })
+
+  viberBot.on(BotEvents.SUBSCRIBED, (response) => {
     helloText.map((message) => {
       response
         .send(new TextMessage(message, startViberKeyboard, null, null, null, 6))
@@ -51,21 +62,23 @@ function start(viberBot) {
                 const userByPhone = result[0]
                 // Якщо дані про юзера є в БД по номеру або чат-айді
                 if (user || userByPhone) {
-                  response.send(
-                    new TextMessage(
-                      exist.viber.replace(
-                        "{{phone}}",
-                        message.contactPhoneNumber
-                      ),
-                      menuViberKeyboard,
-                      null,
-                      null,
-                      null,
-                      6
-                    ).catch((error) => {
+                  response
+                    .send(
+                      new TextMessage(
+                        exist.viber.replace(
+                          "{{phone}}",
+                          message.contactPhoneNumber
+                        ),
+                        menuViberKeyboard,
+                        null,
+                        null,
+                        null,
+                        6
+                      )
+                    )
+                    .catch((error) => {
                       winstonLogger.error(error)
                     })
-                  )
                   // Оновлюємо чат-айди юзера
                   connection.query(
                     addViberBotToken(message, response),
@@ -89,39 +102,14 @@ function start(viberBot) {
                       }
                     }
                   )
-                }
-              }
-            )
-          } else {
-            response
-              .send(
-                new TextMessage(
-                  nonexist.viber.replace(
-                    "{{phone}}",
-                    message.contactPhoneNumber
-                  ),
-                  menuViberKeyboard,
-                  null,
-                  null,
-                  null,
-                  6
-                )
-              )
-              .catch((error) => {
-                winstonLogger.error(error)
-              })
-
-            connection.query(
-              addNewUserFromViber(message, response),
-              function (error, result) {
-                if (error) winstonLogger.error(error)
-
-                if (result) {
-                  winstonLogger.info(`New user -> ${msg.contactPhoneNumber}`)
+                } else {
                   response
                     .send(
                       new TextMessage(
-                        cardCreated,
+                        nonexist.viber.replace(
+                          "{{phone}}",
+                          message.contactPhoneNumber
+                        ),
                         menuViberKeyboard,
                         null,
                         null,
@@ -132,6 +120,33 @@ function start(viberBot) {
                     .catch((error) => {
                       winstonLogger.error(error)
                     })
+
+                  connection.query(
+                    addNewUserFromViber(message, response),
+                    function (error, result) {
+                      if (error) winstonLogger.error(error)
+
+                      if (result) {
+                        winstonLogger.info(
+                          `New user -> ${message.contactPhoneNumber}`
+                        )
+                        response
+                          .send(
+                            new TextMessage(
+                              cardCreated,
+                              menuViberKeyboard,
+                              null,
+                              null,
+                              null,
+                              6
+                            )
+                          )
+                          .catch((error) => {
+                            winstonLogger.error(error)
+                          })
+                      }
+                    }
+                  )
                 }
               }
             )
@@ -254,7 +269,20 @@ function start(viberBot) {
           }
         } catch (error) {
           winstonLogger.error(error)
-          return bot.sendMessage(chatId, "Виникла помилка")
+          response
+            .send(
+              new TextMessage(
+                "Виникла помилка",
+                menuViberKeyboard,
+                null,
+                null,
+                null,
+                6
+              )
+            )
+            .catch((error) => {
+              winstonLogger.error(error)
+            })
         }
       }
     )
