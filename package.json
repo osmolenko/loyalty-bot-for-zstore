@@ -16,7 +16,10 @@
     "express": "^4.18.2",
     "mysql": "^2.18.1",
     "node-telegram-bot-api": "^0.61.0",
-    "viber-bot": "^1.0.18"
+    "viber-bot": "^1.0.18",
+    "winston": "^3.8.2",
+    "winston-console-format": "^1.0.8",
+    "winston-telegram": "^2.6.0"
   },
   "devDependencies": {
     "ngrok": "^4.3.3",
