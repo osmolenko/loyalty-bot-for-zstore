@@ -158,14 +158,17 @@ function start(viberBot) {
             case buttons.loyaltyCard.text:
               getBarcodeUrl(user.phone, function (barcodeUrl) {
                 response
-                  .send(
-                    new PictureMessage(
-                      barcodeUrl,
+                  .send([
+                    new PictureMessage(barcodeUrl, null, barcodeUrl),
+                    new TextMessage(
                       buttons.loyaltyCard.response,
+                      menuViberKeyboard,
                       null,
-                      menuViberKeyboard
-                    )
-                  )
+                      null,
+                      null,
+                      6
+                    ),
+                  ])
                   .catch((error) => {
                     winstonLogger.error(error)
                   })
